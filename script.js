@@ -4,7 +4,7 @@ if ("Notification" in window) {
   Notification.requestPermission().then(function (permission) {
     if (permission === "granted") {
       // Permission granted, enable the button
-      document.getElementById("pushNotificationButton").disabled = false;
+      document.getElementById("startNotificationsButton").disabled = false;
     }
   });
 }
@@ -24,3 +24,29 @@ document
       });
     }
   });
+
+// Start the background job
+document
+  .getElementById("startNotificationsButton")
+  .addEventListener("click", function () {
+    console.log("startNotificationsButton clicked");
+    navigator.serviceWorker.controller.postMessage(
+      "startBackgroundNotifications",
+    );
+  });
+
+// Stop the background job
+document
+  .getElementById("stopNotificationsButton")
+  .addEventListener("click", function () {
+    navigator.serviceWorker.controller.postMessage(
+      "stopBackgroundNotifications",
+    );
+  });
+
+// Add an event listener to receive log messages from the service worker
+navigator.serviceWorker.addEventListener("message", (event) => {
+  if (event.data.action === "log") {
+    console.log(event.data.message);
+  }
+});
